@@ -1,0 +1,4 @@
+WHITESPACE = _{ " " }
+field = @{ ASCII_DIGIT+ }
+record = { field ~ field }
+file = { SOI ~ (record ~ NEWLINE)+ ~ EOI }
