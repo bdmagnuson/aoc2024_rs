@@ -1,0 +1,6 @@
+on = { "do()" }
+off = { "don't()" }
+num = @{ASCII_DIGIT+}
+mul = { "mul(" ~ num ~ "," ~ num ~ ")" }
+other = { ANY }
+file = { SOI ~ (on | off | mul | other)* ~ EOI }

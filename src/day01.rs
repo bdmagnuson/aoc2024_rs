@@ -6,7 +6,7 @@ use pest_derive::Parser;
 #[grammar = "day01.pest"]
 struct Day01Parser;
 
-pub fn day01() {
+pub fn day01() -> (i32, i32) {
     let data = fs::read_to_string("input/day01.txt").expect("Unable to read file");
     let file = Day01Parser::parse(Rule::file, &data)
              .expect("parse failed")
@@ -33,6 +33,5 @@ pub fn day01() {
         score += (l as usize) * rs.clone().into_iter().filter(|r| *r == l).count()
     }
 
-    println!("{:?}", sum);
-    println!("{:?}", score);
+    (sum, score as i32)
 }

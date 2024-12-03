@@ -21,7 +21,7 @@ fn is_safe2 (v : &[i32]) -> bool {
     vs.iter().any(|v| is_safe1(v))
 }
 
-pub fn day02() {
+pub fn day02() -> (i32, i32) {
     let data = fs::read_to_string("input/day02.txt").expect("Unable to read file");
     let file = Day02Parser::parse(Rule::file, &data)
              .expect("parse failed")
@@ -40,7 +40,5 @@ pub fn day02() {
 
     let part1 : i32 = reports.iter().map(|v| if is_safe1(v) {1} else {0}).sum();
     let part2 : i32 = reports.iter().map(|v| if is_safe2(v) {1} else {0}).sum();
-
-    println!("{:?}", part1);
-    println!("{:?}", part2);
+    (part1, part2)
 }
