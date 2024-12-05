@@ -8,5 +8,6 @@ include = ["/src"]
 itertools = "0.13.0"
 pest = "2.7.14"
 pest_derive = "2.7.14"
+petgraph = "0.6.5"
 regex = "1.11.1"
 

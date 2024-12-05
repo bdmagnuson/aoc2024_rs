@@ -1,0 +1,5 @@
+WHITESPACE = _{ " " }
+num = @{ASCII_DIGIT+}
+order = { num ~ "|" ~ num ~ NEWLINE}
+update = {num ~ ("," ~ num)* ~ NEWLINE}
+file = { SOI ~ order* ~ NEWLINE ~ update* ~ EOI }
