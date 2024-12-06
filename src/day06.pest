@@ -1,0 +1,9 @@
+space = { "." }
+blockage = { "#" }
+north = {"^"}
+south = {"v"}
+east  = {">"}
+west  = {"<"}
+guard = { north | south | east | west }
+line = { (space | blockage | guard)+ ~ NEWLINE}
+file = { SOI ~ line+ ~ EOI }
