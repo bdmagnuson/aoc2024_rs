@@ -1,7 +1,7 @@
 use std::fs; 
 use pest::Parser;
 use pest_derive::Parser;
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap as HashMap, FxHashSet as HashSet };
 
 #[derive(Parser)]
 #[grammar = "day06.pest"]
@@ -36,7 +36,7 @@ fn parse_input() -> (Lab, (Pt, Dir)) {
              .expect("parse failed")
              .next().unwrap();
 
-    let mut map = HashMap::new();
+    let mut map = HashMap::default();
     let mut start_loc = (0, 0);
     let mut start_dir = Dir::North;
 
@@ -80,12 +80,14 @@ fn parse_input() -> (Lab, (Pt, Dir)) {
 fn path_len(lab: &Lab, start_pos: Pt, start_dir : Dir) -> Path {
     let mut pos = start_pos;
     let mut dir = start_dir;
-    let mut path = HashSet::with_capacity(5000);
+    let mut path = HashSet::default();
+    path.reserve(5000);
     loop {
         if path.contains(&(pos, dir)) {
             return Path::Loop;
         }
         path.insert((pos, dir));
+
         let new_pos = match dir {
             Dir::North => { (pos.0 - 1, pos.1) }
             Dir::South => { (pos.0 + 1, pos.1) }
@@ -120,27 +122,24 @@ fn part1(lab: &Lab, start_pos: Pt, start_dir : Dir) -> i32 {
 
 fn part2(lab: &Lab, start_pos: Pt, start_dir : Dir) -> i32 {
     let Path::Exit(normal_path) = path_len(lab, start_pos, start_dir) else {panic!("bad")};
-    let locs : Vec<&Pt> = lab.iter().filter(|(_, v)| **v == Content::Empty).map(|(k, _)| k).collect();
     let mut loops = 0;
     let mut test_lab = lab.clone();
-    for loc in locs {
-        if !normal_path.contains(loc) {
+    for loc in normal_path {
+        if loc == start_pos {
             continue;
         }
-        if *loc == start_pos {
-            continue;
-        }
-        test_lab.insert(*loc, Content::Blockage);
+        test_lab.insert(loc, Content::Blockage);
         match path_len(&test_lab, start_pos, start_dir) {
             Path::Exit(_) => { }
             Path::Loop => {loops += 1;}
         }
-        test_lab.insert(*loc, Content::Empty);
+        test_lab.insert(loc, Content::Empty);
     }
     loops
 }
 
 pub fn day06() -> (i32, i32) {
     let (lab, (start_pos, start_dir)) = parse_input();
-    (part1(&lab, start_pos, start_dir), part2(&lab, start_pos, start_dir))
+    (part1(&lab, start_pos, start_dir),
+     part2(&lab, start_pos, start_dir))
 }

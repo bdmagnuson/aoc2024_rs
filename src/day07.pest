@@ -1,0 +1,5 @@
+WHITESPACE = _{" "}
+operand = @{ ASCII_DIGIT+ }
+result = @{ ASCII_DIGIT+ }
+line = {result ~ ":" ~ operand+ ~ NEWLINE}
+file = { SOI ~ line+ ~ EOI }
