@@ -1,0 +1,4 @@
+empty = { "." }
+station = { ASCII_ALPHANUMERIC }
+line = { (empty | station)+ ~ NEWLINE }
+file = { SOI ~ line+ ~ EOI }
