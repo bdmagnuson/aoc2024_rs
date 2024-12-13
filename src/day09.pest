@@ -1,0 +1,3 @@
+num = { ASCII_ALPHANUMERIC }
+input = { num+ }
+file = { SOI ~ input ~ NEWLINE ~ EOI }

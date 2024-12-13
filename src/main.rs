@@ -1,4 +1,3 @@
-
 mod day01;
 mod day02;
 mod day03;
@@ -7,6 +6,9 @@ mod day05;
 mod day06;
 mod day07;
 mod day08;
+mod day09;
+mod day10;
+mod day11;
 
 use std::time::Instant;
 
@@ -27,4 +29,10 @@ fn main() {
     println!("day07: {:?} {}ms", day07::day07(), now.elapsed().as_millis());
     let now = Instant::now();
     println!("day08: {:?} {}ms", day08::day08(), now.elapsed().as_millis());
+    let now = Instant::now();
+    println!("day09: {:?} {}ms", day09::day09(), now.elapsed().as_millis());
+    let now = Instant::now();
+    println!("day10: {:?} {}ms", day10::day10(), now.elapsed().as_millis());
+    let now = Instant::now();
+    println!("day11: {:?} {}ms", day11::day11(), now.elapsed().as_millis());
 }
