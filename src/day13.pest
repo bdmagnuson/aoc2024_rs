@@ -1,0 +1,5 @@
+num = @{ASCII_DIGIT+}
+line = { "Button A: X+" ~ num ~ ", Y+" ~ num ~ NEWLINE ~
+         "Button B: X+" ~ num ~ ", Y+" ~ num ~ NEWLINE ~
+         "Prize: X=" ~ num ~ ", Y=" ~ num ~ NEWLINE }
+file = { SOI ~ line ~ (NEWLINE ~ line)* ~ EOI }
