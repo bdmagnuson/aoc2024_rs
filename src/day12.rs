@@ -2,13 +2,22 @@ use std::fs;
 use pest::Parser;
 use pest_derive::Parser;
 use rustc_hash::{FxHashSet as HashSet };
+use std::cmp::Ordering::{Less, Greater};
 
 
 #[derive(Parser)]
 #[grammar = "day12.pest"]
 struct Day12Parser;
 
-fn parse_input() {
+#[derive(Debug,Clone,PartialEq,Eq)]
+enum Dir {
+    Right,
+    Left,
+    Up,
+    Down
+}
+
+fn parse_input() -> (i32, i32) {
     let data = fs::read_to_string("input/day12.txt").expect("Unable to read file");
     let file = Day12Parser::parse(Rule::file, &data)
              .expect("parse failed")
@@ -73,19 +82,103 @@ fn parse_input() {
         }
         part1 += perim * region.len();
     }
-    println!("{:#?}", part1);
+
+    let mut part2 = 0;
+    for (_, region) in regions.iter() {
+        let mut edges : Vec<(Dir, HashSet<(i32, i32)>)> = Vec::new();
+
+        let mut locs = region.iter().collect::<Vec<_>>();
+        locs.sort_by(|(r1, c1), (r2, c2)| {
+            match r1.cmp(r2) {
+                Less => Less,
+                Greater => Greater,
+                _ => c1.cmp(c2)
+            }
+        });
+
+        for (r, c) in locs.iter() {
+            // Right
+            if !region.contains(&(r + 0, c + 1)) {
+                let mut new_edge = true;
+                for (dir, s) in edges.iter_mut() {
+                    if *dir != Dir::Right {
+                        continue;
+                    } else {
+                        if s.contains(&(r - 1, *c)) || s.contains(&(r + 1, *c)) {
+                            s.insert((*r, *c));
+                            new_edge = false;
+                        }
+                    }
+                }
+                if new_edge {
+                    edges.push((Dir::Right, HashSet::from_iter([(*r, *c)])));
+                }
+            }
+
+            // Left
+            if !region.contains(&(r + 0, c - 1)) {
+                let mut new_edge = true;
+                for (dir, s) in edges.iter_mut() {
+                    if *dir != Dir::Left {
+                        continue;
+                    } else {
+                        if s.contains(&(r - 1, *c)) || s.contains(&(r + 1, *c)) {
+                            s.insert((*r, *c));
+                            new_edge = false;
+                        }
+                    }
+                }
+                if new_edge {
+                    edges.push((Dir::Left, HashSet::from_iter([(*r, *c)])));
+                }
+            }
+        }
+
+        for (r, c) in locs.iter() {
+            // Up
+            if !region.contains(&(r - 1, *c)) {
+                let mut new_edge = true;
+                for (dir, s) in edges.iter_mut() {
+                    if *dir != Dir::Up {
+                        continue;
+                    } else {
+                        if s.contains(&(*r, c - 1)) || s.contains(&(*r, c + 1)) {
+                            s.insert((*r, *c));
+                            new_edge = false;
+                        }
+                    }
+                }
+                if new_edge {
+                    edges.push((Dir::Up, HashSet::from_iter([(*r, *c)])));
+                }
+            }
+
+            // Down
+            if !region.contains(&(r + 1, *c)) {
+                let mut new_edge = true;
+                for (dir, s) in edges.iter_mut() {
+                    if *dir != Dir::Down {
+                        continue;
+                    } else {
+                        if s.contains(&(*r, c - 1)) || s.contains(&(*r, c + 1)) {
+                            s.insert((*r, *c));
+                            new_edge = false;
+                        }
+                    }
+                }
+                if new_edge {
+                    edges.push((Dir::Down, HashSet::from_iter([(*r, *c)])));
+                }
+            }
+        }
+        part2 += region.len() * edges.len();
+    }
+    (part1 as i32, part2 as i32)
 }
 
-
-fn part1() -> i32 {
-    0
-}
-
-fn part2() -> i32 {
-    0
-}
 
 pub fn day12() -> (i32, i32) {
-    parse_input();
-    (0,0)
+    parse_input()
 }
+
+//1115805 H
