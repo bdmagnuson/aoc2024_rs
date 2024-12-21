@@ -1,0 +1,3 @@
+num = { ASCII_DIGIT+ }
+line = { num ~ "," ~ num ~ NEWLINE}
+file = { SOI ~ line+ ~ EOI }

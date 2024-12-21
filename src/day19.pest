@@ -1,0 +1,4 @@
+str = { ASCII_ALPHANUMERIC+ }
+towels = { str ~ (", " ~ str)* }
+patterns = { str ~ (NEWLINE ~ str)* }
+file = { SOI ~ towels ~ NEWLINE ~ NEWLINE ~ patterns ~ NEWLINE ~ EOI }

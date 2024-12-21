@@ -1,0 +1,7 @@
+num = @{ASCII_DIGIT}
+wall = { "#" }
+space = { "." }
+start = { "S" }
+end   = { "E" }
+line = { (wall | space | start | end)+ ~ NEWLINE }
+file = { SOI ~ line+ ~ EOI }

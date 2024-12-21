@@ -1,0 +1,13 @@
+wall  = { "#" }
+container = { "O" }
+bot   = { "@" }
+empty = { "." }
+line  = { (wall | container | bot | empty)+ }
+map   = { (line ~ NEWLINE)+ }
+up    = { "^"}
+down  = { "v"}
+right = { ">"}
+left  = { "<"}
+move  = { up | down | left | right }
+moves = { (move+ ~ NEWLINE)+ }
+file = { SOI ~ map ~ NEWLINE ~ moves ~ EOI }
