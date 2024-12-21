@@ -1,0 +1,6 @@
+ra = { "Register A: " ~ num ~ NEWLINE }
+rb = { "Register B: " ~ num ~ NEWLINE }
+rc = { "Register C: " ~ num ~ NEWLINE }
+num = {ASCII_DIGIT+}
+prog = {"Program: " ~ num ~ ("," ~ num)* ~ NEWLINE }
+file = { ra ~ rb ~ rc ~ NEWLINE ~ prog ~ EOI }
