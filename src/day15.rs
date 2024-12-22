@@ -80,8 +80,6 @@ fn part1(map : &Array2<Obj>, moves : &Vec<Dir>, start: &(usize, usize)) -> i32 {
     let (mut r, mut c) = start;
     let (h, w) = map.dim();
     let mut map = map.clone();
-    println!("{:#?}", map);
-    println!("");
     //for m in moves.iter().take(6).collect::<Vec<_>>() {
     for m in moves {
         let mut sl = match m {
@@ -90,7 +88,6 @@ fn part1(map : &Array2<Obj>, moves : &Vec<Dir>, start: &(usize, usize)) -> i32 {
             Dir::Up    => map.slice_mut(s![0..=r;-1, c]),
             Dir::Down  => map.slice_mut(s![r..h, c]),
         };
-        println!("{:#?}", sl);
         let mv = if sl[1] == Obj::Empty {
             sl[1] = Obj::Bot;
             sl[0] = Obj::Empty;
@@ -127,8 +124,6 @@ fn part1(map : &Array2<Obj>, moves : &Vec<Dir>, start: &(usize, usize)) -> i32 {
             score += r * 100 + c;
         }
     });
-    println!("{:#?}", map);
-    println!("{:#?}", score);
     0
 }
 
