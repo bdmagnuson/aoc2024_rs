@@ -1,0 +1,3 @@
+node = @{ASCII_ALPHANUMERIC+}
+pair = {node ~ "-" ~ node ~ NEWLINE}
+top = {SOI ~ pair+ ~ EOI}
