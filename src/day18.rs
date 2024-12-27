@@ -79,7 +79,6 @@ fn part1(bytes: &Vec::<(isize, isize)>) -> Option<isize> {
 }
 
 fn part2(bytes: &Vec::<(isize, isize)>) -> (isize, isize) {
-    let mut num = 0;
     let mut left = 0;
     let mut right = bytes.len();
     loop {

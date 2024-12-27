@@ -52,7 +52,7 @@ fn parse_input() -> (i32, i32) {
             regions.iter_mut().for_each(|(ch_, ref mut rr)| {
                 if ch == ch_ && rr.contains(&(ro, co)) {
                     rr.insert((*r,*c));
-                    union_region = union_region.union(&rr).map(|r| *r).collect();
+                    union_region = union_region.union(&rr).copied().collect();
                     new_region = false;
                 }
             });
@@ -103,11 +103,9 @@ fn parse_input() -> (i32, i32) {
                 for (dir, s) in edges.iter_mut() {
                     if *dir != Dir::Right {
                         continue;
-                    } else {
-                        if s.contains(&(r - 1, *c)) || s.contains(&(r + 1, *c)) {
-                            s.insert((*r, *c));
-                            new_edge = false;
-                        }
+                    } else if s.contains(&(r - 1, *c)) || s.contains(&(r + 1, *c)) {
+                        s.insert((*r, *c));
+                        new_edge = false;
                     }
                 }
                 if new_edge {

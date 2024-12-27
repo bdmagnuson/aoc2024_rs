@@ -1,3 +1,4 @@
+/*
 mod day01;
 mod day02;
 mod day03;
@@ -13,11 +14,16 @@ mod day12;
 mod day13;
 mod day14;
 mod day15;
-mod day16;
+//mod day16;
 mod day17;
 mod day18;
 mod day19;
 mod day20;
+mod day22;
+mod day23;
+mod day24;
+*/
+mod day21;
 
 use std::time::Instant;
 
@@ -28,6 +34,7 @@ fn run<T:std::fmt::Debug>(day: i32, f:fn () -> T) {
 
 
 fn main() {
+    /*
     run(1, day01::day01);
     run(2, day02::day02);
     run(3, day03::day03);
@@ -43,9 +50,14 @@ fn main() {
     run(13, day13::day13);
     run(14, day14::day14);
     run(15, day15::day15);
-    run(16, day16::day16);
+ //   run(16, day16::day16);
     run(17, day17::day17);
     run(18, day18::day18);
     run(19, day19::day19);
     run(20, day20::day20);
+    run(22, day22::day22);
+    run(23, day23::day23);
+    run(24, day24::day24);
+    */
+    run(21, day21::day21);
 }

@@ -1,0 +1,10 @@
+WHITESPACE = _{ " " }
+node = @{ASCII_ALPHANUMERIC+}
+num = @{ASCII_DIGIT+}
+constant = {node ~ ":" ~ num ~ NEWLINE}
+and = {"AND"}
+or = {"OR"}
+xor = {"XOR"}
+op = { or | xor | and }
+eq = {node ~ op ~ node ~ "->" ~ node ~ NEWLINE}
+top = {SOI ~ constant+ ~ NEWLINE ~ eq+ ~ EOI}

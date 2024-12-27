@@ -11,6 +11,7 @@ ndarray = "0.16.1"
 pest = "2.7.14"
 pest_derive = "2.7.14"
 petgraph = "0.6.5"
+rand = "0.8.5"
 regex = "1.11.1"
 rustc-hash = "2.1.0"
 
