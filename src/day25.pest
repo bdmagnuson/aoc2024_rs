@@ -1,0 +1,5 @@
+hash = {"#"}
+dot = {"."}
+line = { (hash | dot)+ ~ NEWLINE}
+grid = { line+ }
+top = { grid ~ (NEWLINE ~ grid)* }
