@@ -1,7 +1,7 @@
 use std::fs; 
 use pest::Parser;
 use pest_derive::Parser;
-use ndarray::{Array,Array2};
+use ndarray::{Array};
 use itertools::Itertools;
 
 #[derive(Parser)]
@@ -60,7 +60,7 @@ fn parse_input() -> (Vec<Vec<usize>>, Vec<Vec<usize>>) {
     (keys, locks)
 }
 
-fn part1(locks: &Vec<Vec<usize>>, keys: &Vec<Vec<usize>>) -> u32 {
+fn part1(locks: &[Vec<usize>], keys: &[Vec<usize>]) -> u32 {
     let mut compat = 0;
     for (l, k) in locks.iter().cartesian_product(keys.iter()) {
         if l.iter().zip(k.iter()).map(|(a,b)| a + b).all(|v| v <= 5) {

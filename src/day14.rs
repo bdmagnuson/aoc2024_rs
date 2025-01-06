@@ -39,17 +39,16 @@ fn parse_input() -> Vec<Robot> {
 const DIM_X : i32 = 101;
 const DIM_Y : i32 = 103;
 
-fn _display(robots : &Vec<Robot>) {
+fn _display(robots : &[Robot]) {
     let set = HashSet::from_iter(robots.iter().map(|r| (r.px, r.py)));
     for y in 0..103 {
         for x in 0..101 {
             print!("{}", if set.contains(&(x, y)) {"x"} else {"."});
         }
-        println!("");
     }
 }
 
-fn part1(robots : &mut Vec<Robot>) -> i32 {
+fn part1(robots : &mut [Robot]) -> i32 {
     for r in robots.iter_mut() {
         r.px = (r.px + r.vx * 100).rem_euclid(DIM_X);
         r.py = (r.py + r.vy * 100).rem_euclid(DIM_Y);
@@ -71,7 +70,7 @@ fn part1(robots : &mut Vec<Robot>) -> i32 {
 }
 
 
-fn _part2(robots : &mut Vec<Robot>, iter : i32) -> i32 {
+fn _part2(robots : &mut [Robot], iter : i32) -> i32 {
     for r in robots.iter_mut() {
         r.px = (r.px + r.vx * iter).rem_euclid(DIM_X);
         r.py = (r.py + r.vy * iter).rem_euclid(DIM_Y);

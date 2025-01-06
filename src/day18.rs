@@ -50,7 +50,7 @@ fn parse_input() -> Vec::<(isize, isize)> {
 const H : isize = 71;
 const W : isize = 71;
 
-fn part1(bytes: &Vec::<(isize, isize)>) -> Option<isize> {
+fn part1(bytes: &[(isize, isize)]) -> Option<isize> {
     let set = HashSet::from_iter(bytes.iter());
     let mut visited = HashSet::default();
 
@@ -78,13 +78,13 @@ fn part1(bytes: &Vec::<(isize, isize)>) -> Option<isize> {
 
 }
 
-fn part2(bytes: &Vec::<(isize, isize)>) -> (isize, isize) {
+fn part2(bytes: &[(isize, isize)]) -> (isize, isize) {
     let mut left = 0;
     let mut right = bytes.len();
     loop {
         let mid = (right + left) / 2;
-        if part1(&bytes[0..=mid].to_vec()).is_none() {
-            if part1(&bytes[0..=mid-1].to_vec()).is_some() {
+        if part1(&bytes[0..=mid]).is_none() {
+            if part1(&bytes[0..=mid-1]).is_some() {
                 return bytes[mid]
             }
             right = mid;
@@ -96,5 +96,5 @@ fn part2(bytes: &Vec::<(isize, isize)>) -> (isize, isize) {
 
 pub fn day18() -> (isize, (isize, isize)) {
     let bytes = parse_input();
-    (part1(&bytes[0..1024].to_vec()).unwrap(), part2(&bytes))
+    (part1(&bytes[0..1024]).unwrap(), part2(&bytes))
 }

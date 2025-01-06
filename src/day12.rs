@@ -52,7 +52,7 @@ fn parse_input() -> (i32, i32) {
             regions.iter_mut().for_each(|(ch_, ref mut rr)| {
                 if ch == ch_ && rr.contains(&(ro, co)) {
                     rr.insert((*r,*c));
-                    union_region = union_region.union(&rr).copied().collect();
+                    union_region.extend(rr.iter());
                     new_region = false;
                 }
             });
@@ -98,7 +98,7 @@ fn parse_input() -> (i32, i32) {
 
         for (r, c) in locs.iter() {
             // Right
-            if !region.contains(&(r + 0, c + 1)) {
+            if !region.contains(&(*r, c + 1)) {
                 let mut new_edge = true;
                 for (dir, s) in edges.iter_mut() {
                     if *dir != Dir::Right {
@@ -114,16 +114,14 @@ fn parse_input() -> (i32, i32) {
             }
 
             // Left
-            if !region.contains(&(r + 0, c - 1)) {
+            if !region.contains(&(*r, c - 1)) {
                 let mut new_edge = true;
                 for (dir, s) in edges.iter_mut() {
                     if *dir != Dir::Left {
                         continue;
-                    } else {
-                        if s.contains(&(r - 1, *c)) || s.contains(&(r + 1, *c)) {
-                            s.insert((*r, *c));
-                            new_edge = false;
-                        }
+                    } else if s.contains(&(r - 1, *c)) || s.contains(&(r + 1, *c)) {
+                        s.insert((*r, *c));
+                        new_edge = false;
                     }
                 }
                 if new_edge {
@@ -139,11 +137,9 @@ fn parse_input() -> (i32, i32) {
                 for (dir, s) in edges.iter_mut() {
                     if *dir != Dir::Up {
                         continue;
-                    } else {
-                        if s.contains(&(*r, c - 1)) || s.contains(&(*r, c + 1)) {
-                            s.insert((*r, *c));
-                            new_edge = false;
-                        }
+                    } else if s.contains(&(*r, c - 1)) || s.contains(&(*r, c + 1)) {
+                        s.insert((*r, *c));
+                        new_edge = false;
                     }
                 }
                 if new_edge {
@@ -157,11 +153,9 @@ fn parse_input() -> (i32, i32) {
                 for (dir, s) in edges.iter_mut() {
                     if *dir != Dir::Down {
                         continue;
-                    } else {
-                        if s.contains(&(*r, c - 1)) || s.contains(&(*r, c + 1)) {
-                            s.insert((*r, *c));
-                            new_edge = false;
-                        }
+                    } else if s.contains(&(*r, c - 1)) || s.contains(&(*r, c + 1)) {
+                        s.insert((*r, *c));
+                        new_edge = false;
                     }
                 }
                 if new_edge {

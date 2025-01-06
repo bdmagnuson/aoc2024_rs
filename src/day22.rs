@@ -10,8 +10,7 @@ fn get_input() -> Vec<u64> {
 fn evolve(s0: &u64) -> u64 {
     let s1 = ((s0 * 64) ^ s0) % 16777216;
     let s2 = ((s1 / 32) ^ s1) % 16777216;
-    let s3 = ((s2 * 2048) ^ s2) % 16777216;
-    s3
+    ((s2 * 2048) ^ s2) % 16777216
 }
 
 #[derive(Debug)]
@@ -23,12 +22,12 @@ struct Seq {
 fn genseq(seed: u64) -> Seq {
     let vs = iterate(seed, evolve).take(2001).collect::<Vec<_>>();
     Seq {
-        prices : vs[1..].iter().map(|v| *v ).collect::<Vec<_>>(),
+        prices : vs[1..].to_vec(),
         diffs : vs.iter().zip(vs[1..].iter()).map(|(a, b)| (*b as i64) % 10 - (*a as i64) % 10).collect::<Vec<_>>()
     }
 }
 
-fn part1(vs: &Vec<u64>) -> u64 {
+fn part1(vs: &[u64]) -> u64 {
     let mut sum = 0;
     for v in vs.iter() {
         let s = genseq(*v);
@@ -37,13 +36,13 @@ fn part1(vs: &Vec<u64>) -> u64 {
     sum
 }
 
-fn part2(vs: &Vec<u64>) -> u64 {
+fn part2(vs: &[u64]) -> u64 {
     let seqs = vs.iter().map(|v| {
         let mut s = genseq(*v);
         s.prices.iter_mut().for_each(|s| *s %= 10);
         s
     }).collect::<Vec<Seq>>();
-    let changes = repeat_n(-2 as i64..=2, 4).multi_cartesian_product().filter(|s| {
+    let changes = repeat_n(-2_i64..=2, 4).multi_cartesian_product().filter(|s| {
         let mut sum = 0;
         for ss in s {
             sum += ss;

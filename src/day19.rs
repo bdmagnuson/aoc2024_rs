@@ -50,7 +50,7 @@ fn all_combs(pattern: String, towels: Vec<String>) -> Option<u64> {
 
 }
 
-fn part1(towels: &Vec::<String>, patterns: &Vec<String>) -> u64 {
+fn part1(towels: &[String], patterns: &Vec<String>) -> u64 {
     let re = Regex::new(&format!("^({})+$", towels.join("|"))).unwrap();
     let mut possible = 0;
     for p in patterns {
@@ -61,8 +61,8 @@ fn part1(towels: &Vec::<String>, patterns: &Vec<String>) -> u64 {
     possible
 }
 
-fn part2(towels: &Vec::<String>, patterns: &Vec<String>) -> u64 {
-    patterns.iter().filter_map(|p| all_combs(p.clone(), towels.clone())).collect::<Vec<_>>().iter().sum()
+fn part2(towels: &[String], patterns: &[String]) -> u64 {
+    patterns.iter().filter_map(|p| all_combs(p.clone(), towels.to_owned().clone())).collect::<Vec<_>>().iter().sum()
 }
 
 pub fn day19() -> (u64, u64) {

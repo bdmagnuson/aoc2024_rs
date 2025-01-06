@@ -4,7 +4,6 @@ use pest::Parser;
 use pest_derive::Parser;
 use petgraph::graph::{UnGraph, NodeIndex};
 use rustc_hash::{FxHashSet as HashSet, FxHashMap as HashMap };
-use petgraph::algo::tarjan_scc;
 
 #[derive(Parser)]
 #[grammar = "day23.pest"]
@@ -80,13 +79,13 @@ fn parse_input() -> (i32, String) {
     cycles.dedup();
     let mut contains_t = 0;
     for c in cycles.iter() {
-        if c.iter().any(|s| gr[*s].chars().next().unwrap() == 't') {
+        if c.iter().any(|s| gr[*s].starts_with('t')) {
             contains_t += 1;
         }
     }
 
     let mut scc = maximal_cliques(&gr);
-    scc.sort_by(|a,b| a.len().cmp(&b.len()));
+    scc.sort_by_key(|a| a.len());
     let max = scc.last().unwrap();
     let mut part2 = max.iter().map(|n| gr[*n].clone()).collect::<Vec<_>>();
     part2.sort();
@@ -163,6 +162,6 @@ where
     let r = HashSet::default();
     let p = g.node_identifiers().collect::<HashSet<G::NodeId>>();
     let x = HashSet::default();
-    return bron_kerbosch_pivot(g, &adj_mat, r, p, x);
+    bron_kerbosch_pivot(g, &adj_mat, r, p, x)
 }
 

@@ -42,7 +42,7 @@ fn parse_input() -> Cpu {
 }
 
 fn exec(cpu: &mut Cpu) {
-    let lit = cpu.prog[cpu.pc + 1] as u64;
+    let lit = cpu.prog[cpu.pc + 1];
     let combo =
         match cpu.prog[cpu.pc + 1] {
             0 => 0,
@@ -56,8 +56,8 @@ fn exec(cpu: &mut Cpu) {
         };
     let mut branch_taken = false;
     match cpu.prog[cpu.pc] {
-        0 => { cpu.reg_a = cpu.reg_a / (1 << combo); }
-        1 => { cpu.reg_b = cpu.reg_b ^ lit; }
+        0 => { cpu.reg_a /= 1 << combo; }
+        1 => { cpu.reg_b ^= lit; }
         2 => { cpu.reg_b = combo % 8; }
         3 => { 
             if cpu.reg_a != 0 {
@@ -65,7 +65,7 @@ fn exec(cpu: &mut Cpu) {
                 cpu.pc = lit as usize;
             }
         }
-        4 => { cpu.reg_b = cpu.reg_b ^ cpu.reg_c; }
+        4 => { cpu.reg_b ^= cpu.reg_c; }
         5 => { cpu.output.push(combo % 8); }
         6 => { cpu.reg_b = cpu.reg_a / (1 << combo); }
         7 => { cpu.reg_c = cpu.reg_a / (1 << combo); }
@@ -84,7 +84,7 @@ fn part1(cpu: &Cpu) -> String {
     while !cpu.halted {
         exec(&mut cpu);
     }
-    format!("{}", cpu.output.iter().map(|d| d.to_string()).collect::<Vec<_>>().join(","))
+    cpu.output.iter().map(|d| d.to_string()).collect::<Vec<_>>().join(",").to_string()
 }
 
 /*
@@ -105,15 +105,15 @@ fn part1(cpu: &Cpu) -> String {
 */
 
 fn reverse(a: u64, v: &[u64]) -> Option<u64> {
-    if v.len() == 0 {
+    if v.is_empty() {
         return Some(a)
     }
     for n in a*8..(a+1)*8 {
         let mut b = n % 8;
-        b = b ^ 5;
+        b ^= 5;
         let c = n / (1 << b);
-        b = b ^ c;
-        b = b ^ 6;
+        b ^= c;
+        b ^= 6;
         if b % 8 == v[0] {
             let ret = reverse(n, &v[1..]);
             if ret.is_none() {

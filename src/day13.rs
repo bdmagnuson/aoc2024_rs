@@ -42,9 +42,8 @@ fn part1() -> i64 {
     let input = parse_input();
     let mut total = 0;
     for m in input.iter() {
-        match cost(m[0], m[1], m[2], m[3], m[4], m[5]) {
-            Some(n) => total += n,
-            _ => {}
+        if let Some(n) = cost(m[0], m[1], m[2], m[3], m[4], m[5]) {
+            total += n;
         }
     }
     total
@@ -54,9 +53,8 @@ fn part2() -> i64 {
     let input = parse_input();
     let mut total = 0;
     for m in input.iter() {
-        match cost(m[0], m[1], m[2], m[3], m[4] + 10000000000000.0, m[5] + 10000000000000.0) {
-            Some(n) => total += n,
-            _ => {}
+        if let Some(n) = cost(m[0], m[1], m[2], m[3], m[4] + 10000000000000.0, m[5] + 10000000000000.0) {
+            total += n;
         }
     }
     total

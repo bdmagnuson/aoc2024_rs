@@ -112,7 +112,7 @@ fn cost(maze: &Maze) -> HashMap<Pt, usize> {
                 }
             }
     }
-    let best = dist.get(&maze.end).unwrap().clone();
+    let best = *dist.get(&maze.end).unwrap();
     for (_, d) in dist.iter_mut() {
         *d = best - *d;
     }
@@ -120,10 +120,10 @@ fn cost(maze: &Maze) -> HashMap<Pt, usize> {
 }
 
 fn eval_cheats(maze: &Maze, range: isize) -> i32 {
-    let costs = cost(&maze);
+    let costs = cost(maze);
     let mut offsets = Vec::default();
     let mut cheats = HashMap::default();
-    for x in -range as isize..=range {
+    for x in -range..=range {
         for y in -range+x.abs()..=range-x.abs() {
             offsets.push((x,y));
         }
@@ -134,7 +134,7 @@ fn eval_cheats(maze: &Maze, range: isize) -> i32 {
             let init_cost = costs.get(s).unwrap();
             let warp_pos = (s.0 + o.0, s.1 + o.1);
             if let Some(offset_cost) = costs.get(&warp_pos) {
-                let savings = *init_cost as isize - (*offset_cost as isize + cheat_cost as isize);
+                let savings = *init_cost as isize - (*offset_cost as isize + cheat_cost);
                 if savings >= 100 {
                     cheats.entry(savings).and_modify(|s| *s += 1).or_insert(1);
                 }
@@ -146,7 +146,7 @@ fn eval_cheats(maze: &Maze, range: isize) -> i32 {
     for (_,v) in cheats.iter() {
         part2 += v;
     }
-    part2 as i32
+    part2
 }
 
 pub fn day20() -> (i32, i32) {

@@ -33,11 +33,14 @@ fn cost(from: char, to: char, level: u32) -> u64 {
        } else if *dest == (0,0) {
            false
        } else {
+           matches!((dest.1.cmp(&cur.1), dest.0.cmp(&cur.0)), (Greater, Less) | (Less, Less))
+            /*
            match (dest.1.cmp(&cur.1), dest.0.cmp(&cur.0)) {
                (Greater, Less) => true,
                (Less, Less) => true,
                _ => false
            }
+            */
        };
 
    let mut input = String::default();
@@ -48,7 +51,7 @@ fn cost(from: char, to: char, level: u32) -> u64 {
        input.push_str(&ud);
        input.push_str(&lr);
    }
-   input.push_str(&"A");
+   input.push('A');
 
    if level == 0 {
        input.len() as u64
@@ -84,11 +87,14 @@ fn dir2num (code: &str, level: u32) -> u64 {
             } else if dest.1 == 0 && cur.0 == 0 {
                 true
             } else {
+                matches!((dest.1.cmp(&cur.1), dest.0.cmp(&cur.0)), (Greater, Less) | (Less, Less))
+                    /*
                 match (dest.1.cmp(&cur.1), dest.0.cmp(&cur.0)) {
                     (Greater, Less) => true,
                     (Less, Less) => true,
                     _ => false
                 }
+                    */
             };
 
         if lr_first {
@@ -98,7 +104,7 @@ fn dir2num (code: &str, level: u32) -> u64 {
             input.push_str(&ud);
             input.push_str(&lr);
         }
-        input.push_str(&"A");
+        input.push('A');
         cur = dest;
    }
    if level == 0 {

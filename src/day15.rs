@@ -2,14 +2,19 @@ use std::fs;
 use pest::Parser;
 use pest_derive::Parser;
 use ndarray::{Array, Array2, s};
+use rustc_hash::FxHashSet as HashSet;
 
 #[derive(Parser)]
 #[grammar = "day15.pest"]
 struct Day15Parser;
 
+type Pt = (usize, usize);
+
 #[derive(Debug,PartialEq,Eq,Clone)]
 enum Obj {
     Wall,
+    LBox,
+    RBox,
     Box,
     Bot,
     Empty
@@ -23,7 +28,7 @@ enum Dir {
     Down
 }
 
-fn parse_input() -> (Array2<Obj>, Vec<Dir>, (usize, usize)) {
+fn parse_input(part2: bool) -> (Array2<Obj>, Vec<Dir>, (usize, usize)) {
     let data = fs::read_to_string("input/day15.txt").expect("Unable to read file");
     let file = Day15Parser::parse(Rule::file, &data)
              .expect("parse failed")
@@ -39,15 +44,26 @@ fn parse_input() -> (Array2<Obj>, Vec<Dir>, (usize, usize)) {
                 for (r, line) in top.into_inner().enumerate() {
                     let mut l = Vec::new();
                     for (c, ch) in line.into_inner().enumerate()  {
-                        match ch.as_rule() {
-                            Rule::wall => l.push(Obj::Wall),
-                            Rule::container => l.push(Obj::Box),
+                        let obj = match ch.as_rule() {
+                            Rule::wall => Obj::Wall,
+                            Rule::container => Obj::Box,
                             Rule::bot => {
-                                start = (r, c);
-                                l.push(Obj::Bot);
+                                start = (r, c * 2);
+                                Obj::Bot
                             }
-                            Rule::empty => l.push(Obj::Empty),
+                            Rule::empty => Obj::Empty,
                             _ => unreachable!()
+                        };
+                        if part2 {
+                            match obj {
+                                Obj::Wall  => { l.push(Obj::Wall);  l.push(Obj::Wall);  }
+                                Obj::Box   => { l.push(Obj::LBox);  l.push(Obj::RBox);  }
+                                Obj::Bot   => { l.push(Obj::Bot);   l.push(Obj::Empty); }
+                                Obj::Empty => { l.push(Obj::Empty); l.push(Obj::Empty); }
+                                _ => unreachable!()
+                            }
+                        } else {
+                            l.push(obj);
                         }
                     }
                     map.push(l);
@@ -124,11 +140,163 @@ fn part1(map : &Array2<Obj>, moves : &Vec<Dir>, start: &(usize, usize)) -> i32 {
             score += r * 100 + c;
         }
     });
-    0
+    score as i32
+}
+
+fn up_cells(map: &Array2<Obj>, r: usize, c: usize) -> Option<HashSet<Pt>> {
+    let mut set = HashSet::default();
+    match map[[r,c]] {
+        Obj::Bot => {
+            set.insert((r,c));
+            set.extend(up_cells(map, r - 1, c)?);
+            Some(set)
+        },
+        Obj::Empty => {
+            Some(set)
+        }
+        Obj::Wall => None,
+        Obj::LBox => {
+            set.insert((r,c));
+            set.insert((r,c+1));
+            set.extend(up_cells(map, r - 1, c)?);
+            set.extend(up_cells(map, r - 1, c + 1)?);
+            Some(set)
+        }
+        Obj::RBox => {
+            set.insert((r,c));
+            set.insert((r,c-1));
+            set.extend(up_cells(map, r - 1, c)?);
+            set.extend(up_cells(map, r - 1, c - 1)?);
+            Some(set)
+        }
+        _ => unreachable!()
+    }
+
+}
+
+fn down_cells(map: &Array2<Obj>, r: usize, c: usize) -> Option<HashSet<Pt>> {
+    let mut set = HashSet::default();
+    match map[[r,c]] {
+        Obj::Bot => {
+            set.insert((r,c));
+            set.extend(down_cells(map, r + 1, c)?);
+            Some(set)
+        },
+        Obj::Empty => Some(set),
+        Obj::Wall => None,
+        Obj::LBox => {
+            set.insert((r,c));
+            set.insert((r,c+1));
+            set.extend(down_cells(map, r + 1, c)?);
+            set.extend(down_cells(map, r + 1, c + 1)?);
+            Some(set)
+        }
+        Obj::RBox => {
+            set.insert((r,c));
+            set.insert((r,c-1));
+            set.extend(down_cells(map, r + 1, c)?);
+            set.extend(down_cells(map, r + 1, c - 1)?);
+            Some(set)
+        }
+        _ => unreachable!()
+    }
+
+}
+
+fn part2(map : &Array2<Obj>, moves : &Vec<Dir>, start: &(usize, usize)) -> i32 {
+    let (mut r, mut c) = start;
+    let (_, w) = map.dim();
+    let mut map = map.clone();
+    for m in moves {
+        match m {
+            Dir::Left => {
+                let mut sl = map.slice_mut(s![r, 0..=c;-1]);
+                let mut idx = 1;
+                let mut mv = true;
+                loop {
+                    match sl[idx] {
+                        Obj::Wall  => { mv = false; break; }
+                        Obj::Empty => { break; }
+                        _          => { idx += 1; }
+                    }
+                }
+                if mv {
+                    for i in (1..=idx).rev() {
+                        sl[i] = sl[i - 1].clone();
+                    }
+                    sl[0] = Obj::Empty;
+                    c -= 1;
+                }
+            }
+            Dir::Right => {
+                let mut sl = map.slice_mut(s![r, c..w]);
+                let mut idx = 1;
+                let mut mv = true;
+                loop {
+                    match sl[idx] {
+                        Obj::Wall  => { mv = false; break; }
+                        Obj::Empty => { break; }
+                        _          => { idx += 1; }
+                    }
+                }
+                if mv {
+                    for i in (1..=idx).rev() {
+                        sl[i] = sl[i - 1].clone();
+                    }
+                    sl[0] = Obj::Empty;
+                    c += 1;
+                }
+            }
+            Dir::Up => {
+                match up_cells(&map, r, c) {
+                    None => {},
+                    Some(s) => {
+                        let l = s.iter().collect::<Vec<_>>();
+                        let mut mc = map.clone();
+                        for (r, c) in &l {
+                            mc[[*r,*c]] = Obj::Empty;
+                        }
+                        for (r, c) in l {
+                            mc[[r-1,*c]] = map[[*r,*c]].clone();
+                        }
+                        map = mc;
+                        r -= 1;
+                    }
+                }
+            },
+            Dir::Down => {
+                match down_cells(&map, r, c) {
+                    None => {},
+                    Some(s) => {
+                        let l = s.iter().collect::<Vec<_>>();
+                        let mut mc = map.clone();
+                        for (r, c) in &l {
+                            mc[[*r,*c]] = Obj::Empty;
+                        }
+                        for (r, c) in l {
+                            mc[[r+1,*c]] = map[[*r,*c]].clone();
+                        }
+                        map = mc;
+                        r += 1;
+                    }
+                }
+            },
+        }
+    }
+    let mut score = 0;
+    map.indexed_iter().for_each(|((r, c), p)| {
+        if *p == Obj::LBox {
+            score += r * 100 + c;
+        }
+    });
+    score as i32
 }
 
 pub fn day15() -> (i32, i32) {
-    let (map, moves, start) = parse_input();
-    (part1(&map, &moves, &start), 0)
+    let (map, moves, start) = parse_input(false);
+    let p1 = part1(&map, &moves, &start);
+    let (map, moves, start) = parse_input(true);
+    let p2 = part2(&map, &moves, &start);
+    (p1, p2)
 }
 
