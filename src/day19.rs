@@ -2,7 +2,7 @@ use std::fs;
 use regex::Regex;
 use pest::Parser;
 use pest_derive::Parser;
-use memoize::memoize;
+use cached::proc_macro::cached;
 
 #[derive(Parser)]
 #[grammar = "day19.pest"]
@@ -31,8 +31,8 @@ fn parse_input() -> (Vec::<String>, Vec<String>) {
     (towels, patterns)
 }
 
-#[memoize]
-fn all_combs(pattern: String, towels: Vec<String>) -> Option<u64> {
+#[cached]
+fn all_combs<'a>(pattern: String, towels: Vec<String>) -> Option<u64> {
     let sum = towels.iter().filter_map(|t| {
         match pattern.strip_prefix(t) {
             Some("") => {

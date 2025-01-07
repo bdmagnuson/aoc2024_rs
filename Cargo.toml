@@ -5,6 +5,7 @@ edition = "2021"
 include = ["/src"]
 
 [dependencies]
+cached = "0.54.0"
 itertools = "0.13.0"
 memoize = "0.4.2"
 ndarray = "0.16.1"
