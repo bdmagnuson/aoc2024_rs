@@ -1,3 +1,5 @@
+#![feature(sync_unsafe_cell)]
+
 mod day01;
 mod day02;
 mod day03;
